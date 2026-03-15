@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Uncompromised Scale | Enterprise AI Platform</title>
+
+    <!-- Google Fonts: Roboto (Professional) & Inter (Modern Geometric Look) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- CSS Designer Styles -->
+    <style>
+        /* --- Import Roboto font for professional, clean typography --- */
+        @font-face {
+          font-family: 'Roboto';
+          src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-Font-WEB.fallback@2.5a/format/digits?format=webfont') format('woff'), /* Fallback to system font */
+               url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-Font-WEB.fallback@2.5a/format/digits?format=webfont') format('truetype'), /* Fallback to system font */
+               url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-Font-WEB.fallback@2.5a/format/digits?format=webfont') format('opf'); /* Fallback to system font */
+        }
+
+        :root {
+          --primary-color: #3b82f6;       /* Blue-500 */
+          --secondary-color: #1e40af;     /* Blue-700 */
+          --accent-color: #ef4444;        /* Red-500 */
+
+          --bg-body: #f8fafc;             /* Slate-50 */
+          --bg-card: #ffffff;             /* White */
+          --bg-hover: #eff6ff;            /* Sky-100 */
+
+          --text-main: #1e293b;           /* Slate-800 */
+          --text-muted: #64748b;          /* Slate-500 */
+
+          --border-color: #e2e8f0;       /* Slate-200 */
+          --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.075);
+          --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+          /* --- Typography & Spacing --- */
+
+          --font-main: 'Roboto', sans-serif;
+        }
+
+        /* --- Global Reset & Base Styles --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { font-family: var(--font-main); background-color: var(--bg-body); color: var(--text-main); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+        /* --- Utility Classes for Consistency --- */
+        text-center { text-align: center; }
+        mb-3 { margin-bottom: 1.5rem; }
+        mt-4 { margin-top: 1rem; }
+        p { color: var(--text-muted); margin-bottom: 1rem; font-size: 1.125rem; }
+
+        /* --- Grid Layout (Modern CSS Grid) --- */
+        .grid-container { display: grid; gap: 2rem; }
+
+        @media (max-width: 768px) { 
+            .grid-container { grid-template-columns: 1fr; gap: 1.5rem; padding-bottom: 8rem;}
+
+            /* Adjust Button Sizes for Touch Targets on Small Screens */
+            .btn-primary, .btn-secondary { width: 100%; }
+        }
+
+        /* --- Flexbox & Responsive Breakpoints --- */
+        .flex-row { display: flex; align-items: center; justify-content: space-between; }
+        .flex-col { display: flex; flex-direction: column; gap: 0.5rem; }
+
+        /* --- Component Styling (CSS Variables) --- */
+        .card { background-color: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow-md); overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md) inset 0 0 0 rgba(59, 130, 246, 0.2); }
+
+        /* Primary Button */
+        .btn-primary { background-color: var(--primary-color); color: white; border: none; padding: 0.75rem 1.5rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: opacity 0.2s ease, transform 0.2s ease; }
+        .btn-primary:hover { background-color: var(--secondary-color); opacity: 0.9; }
+
+        /* Secondary Button */
+        .btn-secondary { background-color: transparent; color: var(--primary-color); border: 1px solid var(--border-color); padding: 0.75rem 1.5rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: opacity 0.2s ease, transform 0.2s ease; }
+        .btn-secondary:hover { background-color: var(--bg-hover); color: var(--primary-color); }
+
+        /* --- Typography Specifics --- */
+        h1 { font-size: clamp(2rem, 5vw, 4rem); line-height: 1.1; margin-bottom: 0.75rem; letter-spacing: -0.03em; }
+
+        p { color: var(--text-muted); margin-bottom: 1rem; font-size: 1.125rem; }
+
+        /* --- Responsive Media Queries (Mobile Stack) --- */
+        @media (max-width: 640px) {
+          h1 { font-size: clamp(2rem, 3vw, 3rem); }
+
+          .grid-container { grid-template-columns: 1fr; gap: 1.5rem; padding-bottom: 8rem;}
+
+          /* Adjust Button Sizes for Touch Targets on Small Screens */
+          .btn-primary, .btn-secondary { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Hero Section -->
+    <header style="padding-top: 4rem; padding-bottom: 2rem;">
+        <div class="grid-container flex-row justify-center items-start" style="gap: 3rem; margin-bottom: 1.5rem;">
+            <h1>The Uncompromised Scale</h1>
+            <p>A Strategic Imperative for Enterprise Reliability</p>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="grid-container">
+
+            <!-- Feature Block 1: The Core Advantage -->
+            <article style="margin-bottom: 2rem;">
+                <h3>The Uncompromised Scale</h3>
+                <p>In the landscape of modern digital transformation, there is a distinct divide between high-performance startups seeking viral growth and massive enterprises demanding 24/7 availability without sacrificing operational integrity.</p>
+
+                <div class="card">
+                    <ul style="list-style: none; padding-left: 0;">
+                        <li><a href="#" style="color: var(--primary-color); text-decoration: underline; font-weight: bold;">24/7 Availability Without Sacrifice</a></li>
+                        <li><a href="#" style="color: var(--primary-color); text-decoration: underline; font-weight: bold;">Unshakeable Infrastructure</a></li>
+                    </ul>
+                </div>
+
+            </article>
+
+            <!-- Feature Block 2: The Scalability Engine -->
+            <article style="margin-bottom: 2rem;">
+                <h3>The Scalability Engine</h3>
+                <p>We don't just scale your business; we architect it. Our architecture is designed to handle exponential growth, ensuring that as you expand into new markets or increase user base, the infrastructure remains robust and scalable.</p>
+
+                <!-- Feature Grid -->
+                <div class="grid-container" style="gap: 1rem;">
+                    <div class="card">
+                        <h4><strong>Horizontal Scaling</strong></h4>
+                        <p>Distributed load balancing ensures your core infrastructure remains available even if one node fails.</p>
+                    </div>
+                    <div class="card" style="border-left: 3px solid var(--primary-color);">
+                        <h4><strong>Vertical Scaling</strong></h4>
+                        <p>Optimized resource allocation ensures your compute power scales with demand without over-provisioning.</p>
+                    </div>
+                </div>
+
+            </article>
+
+        </div>
+    </header>
+
+    <!-- Call to Action -->
+    <section style="padding: 4rem 0; background-color: var(--bg-hover);">
+        <h2 class="text-center mb-3" style="font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 1.5rem;">Ready to Scale?</h2>
+
+        <!-- CTA Grid -->
+        <div class="grid-container flex-row justify-between">
+            <a href="#" class="btn-primary btn-secondary" style="width: fit-content; display: inline-flex; align-items: center; gap: 0.5rem;">
+                Start Your Journey 
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+
+            <div style="width: fit-content; display: flex; align-items: center;">
+                <!-- Placeholder for Contact Form -->
+                <form action="#" class="card">
+                    <input type="email" placeholder="Enter your email address" required style="padding: 0.75rem; border-radius: 8px; border: none; width: fit-content; outline: none;">
+                    <button type="submit" class="btn-primary btn-secondary" style="width: fit-content; padding: 1rem; font-size: 1.2rem;">Get Started</button>
+                </form>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Indicators -->
+    <footer style="background-color: var(--bg-body); border-top: 1px solid var(--border-color); padding: 3rem 0; margin-bottom: 2rem;">
+        <h4 class="text-center mb-3">Trusted by</h4>
+        <div class="grid-container" style="gap: 1.5rem;">
+            <!-- Placeholders for logos -->
+            <span style="font-size: 0.875rem; color: var(--text-muted); text-decoration: underline;">TechCorp Inc.</span>
+            <span style="font-size: 0.875rem; color: var(--text-muted); text-decoration: underline;">GlobalScale Systems</span>
+        </div>
+    </footer>
+
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "The Uncompromised Scale",
+  "operatingSystem": null,
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "USD",
+    "price": "0.00",
+    "availability": "https://schema.org/InStock"
+  }
+}
+</script>
+
+</body>
+</html>

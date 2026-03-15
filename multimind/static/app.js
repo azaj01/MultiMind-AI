@@ -42,10 +42,53 @@ function renderMath(element) {
   });
 }
 
+function enhanceCodeBlocks(element) {
+  element.querySelectorAll("pre").forEach((pre) => {
+    if (pre.parentElement?.classList.contains("code-block-wrapper")) {
+      return;
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "code-block-wrapper";
+
+    const toolbar = document.createElement("div");
+    toolbar.className = "code-block-toolbar";
+
+    const codeEl = pre.querySelector("code");
+    const lang = [...(codeEl?.classList ?? [])]
+      .find((c) => c.startsWith("language-"))
+      ?.replace("language-", "") ?? "";
+
+    if (lang) {
+      const langLabel = document.createElement("span");
+      langLabel.className = "code-block-lang";
+      langLabel.textContent = lang;
+      toolbar.appendChild(langLabel);
+    }
+
+    const copyBtn = document.createElement("button");
+    copyBtn.className = "code-copy-btn";
+    copyBtn.textContent = "Copy";
+    copyBtn.addEventListener("click", () => {
+      const text = (codeEl ?? pre).textContent ?? "";
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => (copyBtn.textContent = "Copy"), 2000);
+      });
+    });
+
+    toolbar.appendChild(copyBtn);
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(toolbar);
+    wrapper.appendChild(pre);
+  });
+}
+
 function renderFinalAnswer(element, content, html) {
   if (html) {
     element.innerHTML = html;
     renderMath(element);
+    enhanceCodeBlocks(element);
     return;
   }
 
