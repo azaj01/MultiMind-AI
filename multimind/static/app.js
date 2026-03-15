@@ -734,7 +734,7 @@ if (mainTabs) {
         councilSettings.style.display = "none";
         orgSettings.style.display = "block";
         modeToggle.style.display = "none";
-        heroTitle.textContent = "Delegate to the Org Chart";
+        heroTitle.textContent = "Delegate to the Organisation";
         state.selectedMode = "org";
       } else {
         standardSettings.style.display = "block";

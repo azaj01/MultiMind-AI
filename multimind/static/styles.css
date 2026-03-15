@@ -338,6 +338,17 @@ button:hover {
   border: 1px solid rgba(23, 32, 39, 0.08);
 }
 
+#mainTabs {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 16px;
+}
+
+#mainTabs .tab-button {
+  width: 100%;
+}
+
 .mode-button {
   padding: 8px 12px;
   font-size: 0.9rem;

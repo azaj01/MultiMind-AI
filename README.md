@@ -15,7 +15,7 @@
 
 <br/>
 
-MultiMind AI bridges the gap between small local models and complex reasoning. It effortlessly auto-discovers endpoints like Ollama and LM Studio (OpenAI-compatible) and lets you deploy dual-architecture strategies: a sequential **Thinking Pipeline** (Planning, Execution, Critique) or a parallel **Agent Council** (Expert Advisors & Lead Judge).
+MultiMind AI bridges the gap between small local models and complex reasoning. It effortlessly auto-discovers endpoints like Ollama and LM Studio (OpenAI-compatible) and lets you deploy three reasoning architectures: a sequential **Thinking Pipeline** (Planning, Execution, Critique), a parallel **Agent Council** (Expert Advisors & Lead Judge), or a hierarchical **Organisation Mode** (CEO → Departments → Employees → Synthesis).
 
 ---
 
@@ -23,6 +23,7 @@ MultiMind AI bridges the gap between small local models and complex reasoning. I
 
 - **🧠 Thinking Pipeline**: Elevate smaller models with dedicated **Planning**, **Execution**, and **Critique** phases.
 - **🏛 Agent Council**: Deploy a committee of expert models in parallel. Several 'Advisors' provide independent perspectives, synthesized by a **Lead Judge** into a single superior response.
+- **🏢 Organisation Mode**: Run a hierarchical multi-agent workflow where a **CEO** decomposes the request, **department heads** delegate work to specialist roles, and the **CEO** synthesizes all outputs into one final answer.
 - **🔌 Zero-Config Auto-Discovery**:
   - Automatically hooks into local **Ollama** endpoints (`http://127.0.0.1:11434`).
   - Supports optional discovery for **LM Studio** (`http://127.0.0.1:1234`).
@@ -94,6 +95,21 @@ For complex tasks requiring multiple perspectives, MultiMind AI offers the **Age
 1.  **Parallel Advisors**: Multiple models process the user's request independently, providing diverse expert viewpoints.
 2.  **Diverse Perspectives**: Each advisor follows expert-level system prompts to ensure accurate, independent technical analysis.
 3.  **The Judge**: A final 'Lead Synthesizer' model reviews all advisor outputs, cross-examines their findings, resolves conflicts, and merges the best elements into a single definitive response.
+
+---
+
+## 🏢 Organisation Mode (Hierarchical Multi-Agent Workflow)
+
+For tasks that benefit from structured delegation, MultiMind AI includes **Organisation Mode**. Instead of parallel peers only, this mode simulates an org chart with explicit delegation layers:
+
+1. **CEO Planning**: A CEO agent analyzes the user request and splits it into department-level sub-tasks.
+2. **Department Delegation**: Each department head converts its sub-task into role-specific assignments.
+3. **Employee Execution**: Specialist employee agents execute their assigned tasks and stream their outputs.
+4. **CEO Synthesis**: The CEO consolidates all department/employee results into a single cohesive final response.
+
+In the UI, this appears as an interactive organisation chart with expandable nodes and streaming outputs per role, while still ending with one final answer block.
+
+> ⚙️ **Configuration:** Organisation mode uses one selected model for all agents in the hierarchy (configurable via the **Organisation** settings panel).
 
 > 📝 **Note:** Chat history is intentionally in-memory only for the current MVP.
 
