@@ -84,7 +84,7 @@ function enhanceCodeBlocks(element) {
   });
 }
 
-function renderFinalAnswer(element, content, html) {
+function renderFinalAnswer(element, html) {
   if (html) {
     element.innerHTML = html;
     renderMath(element);
@@ -92,11 +92,12 @@ function renderFinalAnswer(element, content, html) {
     return;
   }
 
-  element.textContent = content || "No answer returned.";
+  element.textContent = "No answer returned.";
 }
 
 function renderStepContent(step) {
-  renderFinalAnswer(step.content, step.buffer, step.html);
+  const html = DOMPurify.sanitize(marked.parse(step.buffer));
+  renderFinalAnswer(step.content, html);
 }
 
 function flushStepRender(step) {
@@ -119,11 +120,8 @@ function scheduleStepRender(step) {
 
 function flushFinalAnswerRender(container) {
   container.renderScheduled = false;
-  renderFinalAnswer(
-    container.finalAnswer,
-    container.pendingAnswerContent,
-    container.pendingAnswerHtml,
-  );
+  const html = DOMPurify.sanitize(marked.parse(container.pendingAnswerContent));
+  renderFinalAnswer(container.finalAnswer, html);
 }
 
 function scheduleFinalAnswerRender(container) {
@@ -360,7 +358,6 @@ function createAssistantMessage() {
     timeline: node.querySelector('[data-role="timeline"]'),
     steps: new Map(),
     pendingAnswerContent: "",
-    pendingAnswerHtml: "",
     renderScheduled: false,
   };
 }
@@ -376,7 +373,6 @@ function createOrgChartMessage() {
     orgChart: node.querySelector('[data-role="orgChart"]'),
     nodes: new Map(),
     pendingAnswerContent: "",
-    pendingAnswerHtml: "",
     renderScheduled: false,
   };
 }
@@ -405,8 +401,9 @@ function createOrgNode(container, event) {
   toggle.addEventListener("click", () => {
     output.classList.toggle("collapsed");
     orgNode.isExpanded = !output.classList.contains("collapsed");
-    if (orgNode.isExpanded && orgNode.html) {
-      renderFinalAnswer(output, orgNode.buffer, orgNode.html);
+    if (orgNode.isExpanded) {
+      const html = DOMPurify.sanitize(marked.parse(orgNode.buffer));
+      renderFinalAnswer(output, html);
     }
   });
 
@@ -423,7 +420,6 @@ function createOrgNode(container, event) {
     badge,
     childrenEl: nodeEl.querySelector('[data-role="orgNodeChildren"]'),
     buffer: "",
-    html: "",
     depth,
     isExpanded: false,
     renderScheduled: false,
@@ -440,13 +436,13 @@ function updateOrgNode(container, event) {
 
   if (event.type === "org-node-delta") {
     orgNode.buffer = event.content ?? `${orgNode.buffer}${event.delta}`;
-    orgNode.html = event.html ?? "";
     if (orgNode.isExpanded) {
       if (!orgNode.renderScheduled) {
         orgNode.renderScheduled = true;
         window.requestAnimationFrame(() => {
           orgNode.renderScheduled = false;
-          renderFinalAnswer(orgNode.output, orgNode.buffer, orgNode.html);
+          const html = DOMPurify.sanitize(marked.parse(orgNode.buffer));
+          renderFinalAnswer(orgNode.output, html);
         });
       }
     }
@@ -454,7 +450,6 @@ function updateOrgNode(container, event) {
 
   if (event.type === "org-node-complete") {
     orgNode.buffer = event.content;
-    orgNode.html = event.html ?? "";
     orgNode.status.textContent = "Done";
     orgNode.root.classList.remove("org-node--active");
 
@@ -464,7 +459,8 @@ function updateOrgNode(container, event) {
     }
 
     if (orgNode.isExpanded) {
-      renderFinalAnswer(orgNode.output, orgNode.buffer, orgNode.html);
+      const html = DOMPurify.sanitize(marked.parse(orgNode.buffer));
+      renderFinalAnswer(orgNode.output, html);
     }
   }
 }
@@ -497,7 +493,6 @@ function createStepCard(container, event) {
     content,
     state: stepNode.querySelector('[data-role="stepState"]'),
     buffer: "",
-    html: "",
     isExpanded: false,
     renderScheduled: false,
     showContent,
@@ -520,7 +515,6 @@ function updateStep(container, event) {
 
   if (event.type === "step-delta") {
     step.buffer = event.content ?? `${step.buffer}${event.delta}`;
-    step.html = event.html ?? "";
     if (step.showContent) {
       scheduleStepRender(step);
     }
@@ -528,7 +522,6 @@ function updateStep(container, event) {
 
   if (event.type === "step-complete") {
     step.buffer = event.content;
-    step.html = event.html ?? "";
     if (step.showContent) {
       if (step.renderScheduled) {
         flushStepRender(step);
@@ -591,25 +584,23 @@ async function streamOrgChat(message) {
 
       if (event.type === "answer-start") {
         container.pendingAnswerContent = "";
-        container.pendingAnswerHtml = "";
         container.finalAnswer.textContent = "";
       }
 
       if (event.type === "answer-delta") {
         finalAnswer = event.content ?? `${finalAnswer}${event.delta}`;
         container.pendingAnswerContent = finalAnswer;
-        container.pendingAnswerHtml = event.html ?? "";
         scheduleFinalAnswerRender(container);
       }
 
       if (event.type === "answer-complete") {
         finalAnswer = event.content;
         container.pendingAnswerContent = finalAnswer;
-        container.pendingAnswerHtml = event.html ?? "";
         if (container.renderScheduled) {
           flushFinalAnswerRender(container);
         } else {
-          renderFinalAnswer(container.finalAnswer, finalAnswer, event.html);
+          const html = DOMPurify.sanitize(marked.parse(finalAnswer));
+          renderFinalAnswer(container.finalAnswer, html);
         }
       }
 
@@ -667,25 +658,23 @@ async function streamStandardChat(message) {
 
       if (event.type === "answer-start") {
         assistant.pendingAnswerContent = "";
-        assistant.pendingAnswerHtml = "";
         assistant.finalAnswer.textContent = "";
       }
 
       if (event.type === "answer-delta") {
         finalAnswer = event.content ?? `${finalAnswer}${event.delta}`;
         assistant.pendingAnswerContent = finalAnswer;
-        assistant.pendingAnswerHtml = event.html ?? "";
         scheduleFinalAnswerRender(assistant);
       }
 
       if (event.type === "answer-complete") {
         finalAnswer = event.content;
         assistant.pendingAnswerContent = finalAnswer;
-        assistant.pendingAnswerHtml = event.html ?? "";
         if (assistant.renderScheduled) {
           flushFinalAnswerRender(assistant);
         } else {
-          renderFinalAnswer(assistant.finalAnswer, finalAnswer, event.html);
+          const html = DOMPurify.sanitize(marked.parse(finalAnswer));
+          renderFinalAnswer(assistant.finalAnswer, html);
         }
       }
 

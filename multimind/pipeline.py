@@ -5,7 +5,6 @@ from collections.abc import AsyncIterator
 
 from multimind.config import PIPELINE_STEPS
 from multimind.llm_client import LocalLLMClient
-from multimind.markdown_render import render_markdown_to_html
 
 
 STEP_LABELS = {
@@ -198,7 +197,7 @@ async def _stream_council_member(
                     "step": step_id,
                     "delta": token,
                     "content": partial_content,
-                    "html": render_markdown_to_html(partial_content),
+    
                 }
             )
 
@@ -208,7 +207,7 @@ async def _stream_council_member(
                 "type": "step-complete",
                 "step": step_id,
                 "content": final_content,
-                "html": render_markdown_to_html(final_content),
+
             }
         )
         await queue.put({"type": "internal-member-done", "index": index, "content": final_content})
@@ -219,7 +218,7 @@ async def _stream_council_member(
                 "type": "step-complete",
                 "step": step_id,
                 "content": f"Failed: {exc}",
-                "html": f"<p>Failed: {exc}</p>",
+
             }
         )
         await queue.put({"type": "internal-member-done", "index": index, "content": ""})
@@ -294,14 +293,14 @@ async def run_council_pipeline(
                 "step": "judge",
                 "delta": token,
                 "content": partial_content,
-                "html": render_markdown_to_html(partial_content),
+
             }
             yield {
                 "type": "answer-delta",
                 "step": "judge",
                 "delta": token,
                 "content": partial_content,
-                "html": render_markdown_to_html(partial_content),
+
             }
 
         final_content = "".join(buffer).strip()
@@ -309,26 +308,26 @@ async def run_council_pipeline(
             "type": "step-complete",
             "step": "judge",
             "content": final_content,
-            "html": render_markdown_to_html(final_content),
+
         }
         yield {
             "type": "answer-complete",
             "step": "judge",
             "content": final_content,
-            "html": render_markdown_to_html(final_content),
+
         }
     except Exception as exc:
         yield {
             "type": "step-complete",
             "step": "judge",
             "content": f"Judge failed: {exc}",
-            "html": f"<p>Judge failed: {exc}</p>",
+
         }
         yield {
             "type": "answer-complete",
             "step": "judge",
             "content": f"Judge failed: {exc}",
-            "html": f"<p>Judge failed: {exc}</p>",
+
         }
 
     outputs = {"final": final_content if "final_content" in locals() else ""}
@@ -394,7 +393,7 @@ async def run_pipeline(
                 "step": step,
                 "delta": token,
                 "content": partial_content,
-                "html": render_markdown_to_html(partial_content),
+
             }
 
             if (step == "execute" and mode != "hard") or step == "critique":
@@ -403,7 +402,7 @@ async def run_pipeline(
                     "step": step,
                     "delta": token,
                     "content": partial_content,
-                    "html": render_markdown_to_html(partial_content),
+    
                 }
 
         outputs[step] = "".join(buffer).strip()
@@ -411,7 +410,7 @@ async def run_pipeline(
             "type": "step-complete",
             "step": step,
             "content": outputs[step],
-            "html": render_markdown_to_html(outputs[step]),
+
         }
 
         if (step == "execute" and mode != "hard") or step == "critique":
@@ -419,7 +418,7 @@ async def run_pipeline(
                 "type": "answer-complete",
                 "step": step,
                 "content": outputs[step],
-                "html": render_markdown_to_html(outputs[step]),
+    
             }
 
     if mode == "off":

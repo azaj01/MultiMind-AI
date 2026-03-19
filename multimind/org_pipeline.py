@@ -5,7 +5,6 @@ import re
 from collections.abc import AsyncIterator
 
 from multimind.llm_client import LocalLLMClient
-from multimind.markdown_render import render_markdown_to_html
 from multimind.org_roles import (
     VALID_DEPARTMENTS,
     get_department_employees,
@@ -190,7 +189,6 @@ async def run_org_pipeline(
             "node_id": ceo_id,
             "delta": token,
             "content": ceo_partial,
-            "html": render_markdown_to_html(ceo_partial),
         }
 
     ceo_output = "".join(ceo_buffer).strip()
@@ -205,7 +203,6 @@ async def run_org_pipeline(
         "type": "org-node-complete",
         "node_id": ceo_id,
         "content": ceo_output,
-        "html": render_markdown_to_html(ceo_output),
         "reports": len(departments),
     }
 
@@ -256,7 +253,6 @@ async def run_org_pipeline(
                 "node_id": dept_id,
                 "delta": token,
                 "content": scope_partial,
-                "html": render_markdown_to_html(scope_partial),
             }
 
         scope_output = "".join(scope_buffer).strip()
@@ -269,7 +265,6 @@ async def run_org_pipeline(
             "type": "org-node-complete",
             "node_id": dept_id,
             "content": scope_output,
-            "html": render_markdown_to_html(scope_output),
             "reports": len(assignments),
         }
 
@@ -327,7 +322,6 @@ async def run_org_pipeline(
                     "node_id": emp_id,
                     "delta": token,
                     "content": emp_partial,
-                    "html": render_markdown_to_html(emp_partial),
                 }
 
             emp_output = "".join(emp_buffer).strip()
@@ -335,7 +329,6 @@ async def run_org_pipeline(
                 "type": "org-node-complete",
                 "node_id": emp_id,
                 "content": emp_output,
-                "html": render_markdown_to_html(emp_output),
                 "reports": 0,
             }
 
@@ -388,7 +381,6 @@ async def run_org_pipeline(
             "step": "org-synthesis",
             "delta": token,
             "content": synth_partial,
-            "html": render_markdown_to_html(synth_partial),
         }
 
     final_content = "".join(synth_buffer).strip()
@@ -396,7 +388,6 @@ async def run_org_pipeline(
         "type": "answer-complete",
         "step": "org-synthesis",
         "content": final_content,
-        "html": render_markdown_to_html(final_content),
     }
 
     yield {"type": "run-complete", "outputs": {"final": final_content}}

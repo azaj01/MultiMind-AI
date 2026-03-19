@@ -363,11 +363,17 @@ button:hover {
   display: grid;
   gap: 16px;
   align-content: start;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 6px;
 }
 
 .message {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
   border-radius: var(--radius);
   border: 1px solid rgba(23, 32, 39, 0.08);
   background: var(--panel-strong);
@@ -727,6 +733,14 @@ button:hover {
 
 /* ── Org Chart ── */
 
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
 .org-chart {
   margin-top: 18px;
   display: flex;
@@ -734,8 +748,9 @@ button:hover {
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  overflow-x: hidden;
-  padding: 10px 0 6px;
+  overflow-x: auto;
+  padding: 10px 0 16px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .org-node {
