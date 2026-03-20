@@ -1069,8 +1069,57 @@ if (mainTabs) {
 const appShell = document.querySelector("#appShell");
 const toggleSidebar = document.querySelector("#toggleSidebar");
 if (toggleSidebar && appShell) {
+  // Set initial state
+  if (!getSidebarState()) {
+    appShell.classList.add("sidebar-collapsed");
+  }
+
   toggleSidebar.addEventListener("click", () => {
-    appShell.classList.toggle("sidebar-collapsed");
+    const isCollapsed = appShell.classList.toggle("sidebar-collapsed");
+    saveSidebarState(!isCollapsed);
+  });
+}
+
+// Settings Accordion
+const toggleSettingsBtn = document.querySelector("#toggleSettingsAccordion");
+const settingsContainer = document.querySelector("#settingsContainer");
+
+if (toggleSettingsBtn && settingsContainer) {
+  toggleSettingsBtn.addEventListener("click", () => {
+    settingsContainer.classList.toggle("collapsed");
+    const icon = toggleSettingsBtn.querySelector(".settings-icon");
+    if (settingsContainer.classList.contains("collapsed")) {
+      icon.style.transform = "rotate(0deg)"; // Point right
+    } else {
+      icon.style.transform = "rotate(90deg)"; // Point down (expanded)
+    }
+  });
+}
+
+// Chats Accordion
+const toggleChatsBtn = document.querySelector("#toggleChatsAccordion");
+const chatsContainer = document.querySelector("#chatsContainer");
+
+if (toggleChatsBtn && chatsContainer) {
+  toggleChatsBtn.addEventListener("click", (e) => {
+    // Prevent toggle if clicking the "New Chat" button
+    if (e.target.closest('#newChatButton')) return;
+
+    chatsContainer.classList.toggle("collapsed");
+    const icon = toggleChatsBtn.querySelector(".chats-icon");
+    if (chatsContainer.classList.contains("collapsed")) {
+      icon.style.transform = "rotate(0deg)"; // Point right
+    } else {
+      icon.style.transform = "rotate(90deg)"; // Point down (expanded)
+    }
+  });
+}
+
+const newChatBtn = document.querySelector("#newChatButton");
+if (newChatBtn) {
+  newChatBtn.addEventListener("click", (e) => {
+    e.stopPropagation(); // Stop accordion toggle
+    startNewChat();
   });
 }
 
@@ -1166,30 +1215,10 @@ function renderConversationList() {
   });
 }
 
-function initHistorySidebar() {
-  const toggleBtn = document.querySelector("#toggleHistorySidebar");
-  const newChatBtn = document.querySelector("#newChatButton");
-  const appShell = document.querySelector("#appShell");
-
-  if (toggleBtn && appShell) {
-    // Set initial state
-    if (!getSidebarState()) {
-      appShell.classList.add("history-collapsed");
-    }
-
-    toggleBtn.addEventListener("click", () => {
-      const isCollapsed = appShell.classList.toggle("history-collapsed");
-      saveSidebarState(!isCollapsed);
-    });
-  }
-
-  if (newChatBtn) {
-    newChatBtn.addEventListener("click", startNewChat);
-  }
-}
-
 async function initializeApp() {
-  initHistorySidebar();
+  // Cleanup old state just in case
+  localStorage.removeItem('multimind_history_collapsed');
+
   setupAutoSave();
 
   // Load settings

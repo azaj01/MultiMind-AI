@@ -59,22 +59,14 @@ body {
 .shell {
   position: relative;
   display: grid;
-  grid-template-columns: 240px 340px minmax(0, 1fr);
+  grid-template-columns: 340px minmax(0, 1fr);
   gap: 20px;
   padding: 22px;
   transition: grid-template-columns 300ms ease;
 }
 
-.shell.history-collapsed {
-  grid-template-columns: 80px 340px minmax(0, 1fr);
-}
-
 .shell.sidebar-collapsed {
-  grid-template-columns: 240px 80px minmax(0, 1fr);
-}
-
-.shell.history-collapsed.sidebar-collapsed {
-  grid-template-columns: 80px 80px minmax(0, 1fr);
+  grid-template-columns: 80px minmax(0, 1fr);
 }
 
 /* New History Sidebar Styles */
@@ -88,20 +80,11 @@ body {
   flex-direction: column;
 }
 
-.shell.history-collapsed .sidebar-panel {
-  padding: 24px 12px;
-}
-
 .sidebar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-}
-
-.shell.history-collapsed .sidebar-header {
-  flex-direction: column;
-  gap: 12px;
 }
 
 .sidebar-title {
@@ -111,16 +94,16 @@ body {
   white-space: nowrap;
 }
 
-.shell.history-collapsed .sidebar-title {
-  display: none;
+.sidebar-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  min-height: 100px;
 }
 
 .conversation-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  overflow-y: auto;
-  flex-grow: 1;
 }
 
 .conversation-item {
@@ -154,10 +137,6 @@ body {
   margin-right: 8px;
 }
 
-.shell.history-collapsed .conversation-title {
-  display: none;
-}
-
 .delete-chat-btn {
   opacity: 0;
   padding: 4px;
@@ -173,25 +152,8 @@ body {
   color: #d32f2f;
 }
 
-.shell.history-collapsed .delete-chat-btn {
-  display: none;
-}
-
 .chat-count-badge {
   display: none;
-}
-
-.shell.history-collapsed .chat-count-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--accent-soft);
-  color: var(--accent-strong);
-  font-size: 0.7rem;
-  font-weight: 600;
 }
 
 .panel {
@@ -202,15 +164,76 @@ body {
   box-shadow: var(--shadow);
 }
 
-.settings-panel {
+.main-sidebar {
   padding: 24px;
   position: sticky;
   top: 22px;
   height: calc(100vh - 44px);
-  overflow: auto;
   transition: padding 300ms ease;
   display: flex;
   flex-direction: column;
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden; /* Prevent this from scrolling, child will scroll */
+}
+
+/* New Scroll Area */
+.sidebar-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px; /* Space for scrollbar */
+}
+
+/* Accordion Headers */
+.accordion-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 8px;
+  margin-top: 16px;
+  cursor: pointer;
+}
+.accordion-title {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.accordion-icon {
+  transition: transform 300ms ease;
+}
+
+/* Chats Container Transitions */
+.chats-container {
+  overflow-y: hidden; /* Hide overflow to crop at 3 items */
+  max-height: 2000px; /* Expanded state */
+  transition: max-height 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.chats-container.collapsed {
+  /* 3 items (~42px each) + padding/margins = approx 140px */
+  max-height: 140px;
+}
+
+.settings-container {
+  overflow-y: hidden;
+  max-height: 2000px;
+  transition: max-height 400ms cubic-bezier(0.4, 0, 0.2, 1), padding 300ms ease, margin 300ms ease;
+  margin-top: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.settings-container.collapsed {
+  max-height: 0;
+  margin-top: 0;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .settings-header {
@@ -236,6 +259,14 @@ body {
 
 .shell.sidebar-collapsed #toggleSidebar {
   transform: rotate(180deg);
+}
+
+.shell.sidebar-collapsed .sidebar-content {
+  display: none;
+}
+
+.shell.sidebar-collapsed .settings-container {
+  display: none;
 }
 
 .icon-button {
@@ -1159,28 +1190,16 @@ svg {
   background: linear-gradient(180deg, rgba(184, 92, 56, 0.34), rgba(184, 92, 56, 0.12));
 }
 
-@media (max-width: 1200px) {
-  .shell {
-    grid-template-columns: 80px 340px minmax(0, 1fr);
-  }
-}
-
 @media (max-width: 1040px) {
-  .shell {
+  .shell,
+  .shell.sidebar-collapsed {
     grid-template-columns: 1fr;
   }
-
-  .sidebar-panel {
+  .main-sidebar {
     position: static;
     height: auto;
     max-height: 300px;
   }
-
-  .settings-panel {
-    position: static;
-    height: auto;
-  }
-
   .workspace-panel {
     min-height: auto;
   }
@@ -1192,7 +1211,7 @@ svg {
   }
 
   .workspace-panel,
-  .settings-panel {
+  .main-sidebar {
     padding: 18px;
   }
 
