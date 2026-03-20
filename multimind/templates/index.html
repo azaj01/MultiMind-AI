@@ -72,14 +72,9 @@
           </div>
 
           <div class="sidebar-scroll-area">
-            <button id="toggleChatsAccordion" class="ghost-button accordion-header" type="button">
+            <button id="toggleChatsAccordion" class="accordion-header" type="button">
               <div class="accordion-title">
                 <span>Chats</span>
-                <span id="newChatButton" class="icon-button" aria-label="New Chat" title="New Chat" style="padding: 0; margin-left: 8px;">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 5v14M5 12h14" />
-                  </svg>
-                </span>
               </div>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="accordion-icon chats-icon" style="transform: rotate(90deg);">
                 <path d="M9 18l6-6-6-6" />
@@ -87,10 +82,16 @@
             </button>
 
             <div id="chatsContainer" class="chats-container">
+              <button id="newChatButton" class="chat-dropdown-add" type="button" aria-label="New Chat" title="New Chat">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                <span>New Chat</span>
+              </button>
               <ul id="conversationList" class="conversation-list"></ul>
             </div>
 
-            <button id="toggleSettingsAccordion" class="ghost-button accordion-header" type="button">
+            <button id="toggleSettingsAccordion" class="accordion-header" type="button">
               <div class="accordion-title">
                 <span>Settings</span>
               </div>

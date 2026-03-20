@@ -106,6 +106,18 @@ body {
   margin: 0;
 }
 
+.chat-dropdown-add {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--text);
+}
+
 .conversation-item {
   display: flex;
   justify-content: space-between;
@@ -198,6 +210,8 @@ body {
   padding: 12px 8px;
   margin-top: 16px;
   cursor: pointer;
+  background: transparent;
+  border: 0;
 }
 .accordion-title {
   display: flex;

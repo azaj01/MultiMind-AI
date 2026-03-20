@@ -1101,10 +1101,7 @@ const toggleChatsBtn = document.querySelector("#toggleChatsAccordion");
 const chatsContainer = document.querySelector("#chatsContainer");
 
 if (toggleChatsBtn && chatsContainer) {
-  toggleChatsBtn.addEventListener("click", (e) => {
-    // Prevent toggle if clicking the "New Chat" button
-    if (e.target.closest('#newChatButton')) return;
-
+  toggleChatsBtn.addEventListener("click", () => {
     chatsContainer.classList.toggle("collapsed");
     const icon = toggleChatsBtn.querySelector(".chats-icon");
     if (chatsContainer.classList.contains("collapsed")) {
