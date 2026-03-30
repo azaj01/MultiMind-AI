@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-03-30T16:27:22.801084+00:00",
+  "models": [
+    "qwen3.5:0.8b"
+  ],
+  "modes": [
+    "off",
+    "medium",
+    "hard"
+  ],
+  "suites": [
+    "gsm8k_mini"
+  ],
+  "council_models": [
+    "qwen3.5:4b",
+    "ministral-3:3b",
+    "qwen3-4b-instruct",
+    "llama3.2:3b"
+  ],
+  "total_time_seconds": 8308.27,
+  "runs": {
+    "gsm8k_mini__qwen3.5:0.8b__off": {
+      "accuracy": 0.6,
+      "total_questions": 10,
+      "correct": 6,
+      "mean_time_seconds": 5.53,
+      "median_time_seconds": 4.83,
+      "total_output_chars": 8450,
+      "self_correction_rate": null
+    },
+    "gsm8k_mini__qwen3.5:0.8b__medium": {
+      "accuracy": 0.5,
+      "total_questions": 10,
+      "correct": 5,
+      "mean_time_seconds": 336.63,
+      "median_time_seconds": 70.19,
+      "total_output_chars": 555865,
+      "self_correction_rate": null
+    },
+    "gsm8k_mini__qwen3.5:0.8b__hard": {
+      "accuracy": 0.3,
+      "total_questions": 10,
+      "correct": 3,
+      "mean_time_seconds": 488.65,
+      "median_time_seconds": 110.63,
+      "total_output_chars": 702475,
+      "self_correction_rate": 1.0
+    }
+  }
+}

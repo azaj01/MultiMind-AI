@@ -1,0 +1,162 @@
+[
+  {
+    "model": "qwen3.5:0.8b",
+    "mode": "off",
+    "suite": "gsm8k_mini",
+    "question_id": "gsm-01",
+    "question": "A baker makes 48 cupcakes in the morning and 32 cupcakes in the afternoon. If each box holds 8 cupcakes, how many boxes does the baker need?",
+    "expected_answer": "10",
+    "final_answer": "To determine the number of boxes needed, we must first calculate the total number of cupcakes baked and then divide by the capacity per box to find a whole-number result (since you cannot have half a box).\n\n1.  **Calculate Total Cupcakes:** The baker made $48$ in the morning plus $32$ in the afternoon:\n    $$48 + 32 = 80 \\text{ cupcakes}$$\n\n2.  **Determine Boxes Needed per Box Capacity:** Each box holds exactly $8$ cupcakes. To find how many boxes are required to hold all of them, divide the total count by the capacity ($\\div 8$):\n    $$80 \\div 8 = 10$$\n\n3.  **Final Verification:** Since you cannot have a fraction of an empty box for this specific distribution (the math results in exactly $10$, not rounding to two whole boxes), no additional extra boxes are needed beyond the calculated total. The baker needs enough space to hold all cupcakes without any leftovers or waste due to partial filling per box requirement here, though typically you'd round up if there were remainders ($\\lceil 80/8 \\rceil = 10$).\n\n**Answer:**\nThe baker will need **10 boxes**.",
+    "all_stage_outputs": {
+      "execute": "To determine the number of boxes needed, we must first calculate the total number of cupcakes baked and then divide by the capacity per box to find a whole-number result (since you cannot have half a box).\n\n1.  **Calculate Total Cupcakes:** The baker made $48$ in the morning plus $32$ in the afternoon:\n    $$48 + 32 = 80 \\text{ cupcakes}$$\n\n2.  **Determine Boxes Needed per Box Capacity:** Each box holds exactly $8$ cupcakes. To find how many boxes are required to hold all of them, divide the total count by the capacity ($\\div 8$):\n    $$80 \\div 8 = 10$$\n\n3.  **Final Verification:** Since you cannot have a fraction of an empty box for this specific distribution (the math results in exactly $10$, not rounding to two whole boxes), no additional extra boxes are needed beyond the calculated total. The baker needs enough space to hold all cupcakes without any leftovers or waste due to partial filling per box requirement here, though typically you'd round up if there were remainders ($\\lceil 80/8 \\rceil = 10$).\n\n**Answer:**\nThe baker will need **10 boxes**."
+    },
+    "wall_time_seconds": 7.5188239159761,
+    "total_output_chars": 1066,
+    "metadata": {},
+    "score": 1.0
+  },
+  {
+    "model": "qwen3.5:0.8b",
+    "mode": "off",
+    "suite": "gsm8k_mini",
+    "question_id": "gsm-02",
+    "question": "Maria has 120 stickers. She gives 15 stickers to each of her 6 friends. How many stickers does Maria have left?",
+    "expected_answer": "30",
+    "final_answer": "To find out how many stickers Maria has left, we can break down the problem into two clear steps using subtraction from a total amount (Total) and multiplication to calculate an unknown part ($x$).\n\n**Step 1: Calculate the number of stickers given away.**\nMaria gives each friend **15** stickers. She has **6** friends.\n$$ \\text{Stickers Given Away} = 15 \\times 6 $$\nCalculating this product: $10 + 5 + 3 + 2 = 22$. So, she gave away **22** stickers total.\n\n**Step 2: Calculate the remaining amount.**\nSubtract the number of stickers given from her original count (120).\n$$ \\text{Stickers Left} = 120 - 22 $$\nPerforming the subtraction ($120$ minus $20$ is $100$, then subtract another $2$ to get a lower zero): **98**.\n\nMaria has **98** stickers left.",
+    "all_stage_outputs": {
+      "execute": "To find out how many stickers Maria has left, we can break down the problem into two clear steps using subtraction from a total amount (Total) and multiplication to calculate an unknown part ($x$).\n\n**Step 1: Calculate the number of stickers given away.**\nMaria gives each friend **15** stickers. She has **6** friends.\n$$ \\text{Stickers Given Away} = 15 \\times 6 $$\nCalculating this product: $10 + 5 + 3 + 2 = 22$. So, she gave away **22** stickers total.\n\n**Step 2: Calculate the remaining amount.**\nSubtract the number of stickers given from her original count (120).\n$$ \\text{Stickers Left} = 120 - 22 $$\nPerforming the subtraction ($120$ minus $20$ is $100$, then subtract another $2$ to get a lower zero): **98**.\n\nMaria has **98** stickers left."
+    },
+    "wall_time_seconds": 4.831624541984638,
+    "total_output_chars": 752,
+    "metadata": {},
+    "score": 0.0
+  },
+  {
+    "model": "qwen3.5:0.8b",
+    "mode": "off",
+    "suite": "gsm8k_mini",
+    "question_id": "gsm-03",
+    "question": "A train travels at 60 miles per hour. How far does it travel in 3 hours and 30 minutes?",
+    "expected_answer": "210",
+    "final_answer": "To find out how far a train traveling at **60 mph** covers, we first need to convert time from \"hours\" into total seconds (since speed is in miles per hour). The given time of 3 hours and 30 minutes can be broken down as follows:  \n- Hours = $1 \\text{ hr}$  \n- Minutes = $\\frac{3}{6} \\times 24 \\text{ hrs} = 1.5$ (since there are 8 in a minute)  \n\nAdding these together gives the total time of **$\\mathbf{2.5 hours, or } 7/2 \\text{ hours}$**.\n\nNext, we multiply this by speed:  \n$$60 \\times 2.5 = 150 \\text{ miles}.$$",
+    "all_stage_outputs": {
+      "execute": "To find out how far a train traveling at **60 mph** covers, we first need to convert time from \"hours\" into total seconds (since speed is in miles per hour). The given time of 3 hours and 30 minutes can be broken down as follows:  \n- Hours = $1 \\text{ hr}$  \n- Minutes = $\\frac{3}{6} \\times 24 \\text{ hrs} = 1.5$ (since there are 8 in a minute)  \n\nAdding these together gives the total time of **$\\mathbf{2.5 hours, or } 7/2 \\text{ hours}$**.\n\nNext, we multiply this by speed:  \n$$60 \\times 2.5 = 150 \\text{ miles}.$$"
+    },
+    "wall_time_seconds": 3.7005172909994144,
+    "total_output_chars": 517,
+    "metadata": {},
+    "score": 0.0
+  },
+  {
+    "model": "qwen3.5:0.8b",
+    "mode": "off",
+    "suite": "gsm8k_mini",
+    "question_id": "gsm-04",
+    "question": "Tom buys 3 notebooks at $4 each and 2 pens at $1.50 each. How much does he spend in total?",
+    "expected_answer": "15",
+    "final_answer": "To determine Tom's total spending, we need to calculate the cost for both notebooks and pens separately before summing them up.\n\n1.  **Notebooks**: He buys 3 at $4 each.\n    $$ \\text{Cost} = 3 \\times \\$4 = \\$12 $$\n\n2.  **Pens**: He buys 2 at $1.50 each.\n    $$ \\text{Cost} = 2 \\times \\$1.50 = \\$3 $$\n\n3.  **Total Spending**: Add the notebook cost and pen costs together.\n    $$ \\$12 + \\$3 = \\$15 $$\n\nTom spends a total of $15 on his purchases.",
+    "all_stage_outputs": {
+      "execute": "To determine Tom's total spending, we need to calculate the cost for both notebooks and pens separately before summing them up.\n\n1.  **Notebooks**: He buys 3 at $4 each.\n    $$ \\text{Cost} = 3 \\times \\$4 = \\$12 $$\n\n2.  **Pens**: He buys 2 at $1.50 each.\n    $$ \\text{Cost} = 2 \\times \\$1.50 = \\$3 $$\n\n3.  **Total Spending**: Add the notebook cost and pen costs together.\n    $$ \\$12 + \\$3 = \\$15 $$\n\nTom spends a total of $15 on his purchases."
+    },
+    "wall_time_seconds": 3.3212717499991413,
+    "total_output_chars": 443,
+    "metadata": {},
+    "score": 1.0
+  },
+  {
+    "model": "qwen3.5:0.8b",
+    "mode": "off",
+    "suite": "gsm8k_mini",
+    "question_id": "gsm-05",
+    "question": "A garden has 5 rows of flowers with 12 flowers in each row. If 8 flowers die, how many flowers are left?",
+    "expected_answer": "52",
+    "final_answer": "To solve this problem, we need to determine if there is a difference between \"flowers\" and \"blooms.\" In garden contexts, these terms often refer to distinct entities (individual flowers vs. flower clusters), so they should be treated as separate units for the calculation unless specified otherwise.\n\nHere is the step-by-step breakdown:\n1.  **Calculate total initial count:** There are 5 rows with a total of $12$ flowers in each row ($5 \\times 12 = 60$).\n2.  **Identify lost items:** If all $8$ individual flowers die, that accounts for exactly the number given (the \"number\" part is usually distinct from the \"blooms\").\n3.  **Calculate remaining count:** Subtract the dead plants ($-8$) from the total initial count ($60 - 8 = 52$).\n\n**Answer:** There are $52$ flowers left in the garden after all $8$ die.",
+    "all_stage_outputs": {
+      "execute": "To solve this problem, we need to determine if there is a difference between \"flowers\" and \"blooms.\" In garden contexts, these terms often refer to distinct entities (individual flowers vs. flower clusters), so they should be treated as separate units for the calculation unless specified otherwise.\n\nHere is the step-by-step breakdown:\n1.  **Calculate total initial count:** There are 5 rows with a total of $12$ flowers in each row ($5 \\times 12 = 60$).\n2.  **Identify lost items:** If all $8$ individual flowers die, that accounts for exactly the number given (the \"number\" part is usually distinct from the \"blooms\").\n3.  **Calculate remaining count:** Subtract the dead plants ($-8$) from the total initial count ($60 - 8 = 52$).\n\n**Answer:** There are $52$ flowers left in the garden after all $8$ die."
+    },
+    "wall_time_seconds": 4.504685166000854,
+    "total_output_chars": 808,
+    "metadata": {},
+    "score": 0.0
+  },
+  {
+    "model": "qwen3.5:0.8b",
+    "mode": "off",
+    "suite": "gsm8k_mini",
+    "question_id": "gsm-06",
+    "question": "Sarah reads 25 pages per day. If a book has 175 pages, how many days will it take her to finish the book?",
+    "expected_answer": "7",
+    "final_answer": "To find out how long Sarah needs to read the entire book, we can divide the total number of pages by the daily reading rate. This calculation is straightforward and avoids unnecessary complexity with fractions or decimals; instead, it uses whole numbers directly.\n\n1.  **Identify the key values:**\n    *   Total pages in the book: $175$\n    *   Pages read per day: $25$\n\n2.  **Set up the division problem:**\n    $$ \\text{Days} = \\frac{\\text{Total Pages}}{\\text{Pages/day}} $$\n    $$ \\text{Days} = \\frac{175}{25} $$\n\n3.  **Perform the calculation:**\n    *   We can simplify this by dividing both numbers by $5$: $\\frac{175 \\div 5}{25 \\div 5}$, which equals $\\frac{35}{5}$.\n    *   Now we divide: $35 \\div 5 = 7$ days.\n\nSarah will finish the book in **7** days.",
+    "all_stage_outputs": {
+      "execute": "To find out how long Sarah needs to read the entire book, we can divide the total number of pages by the daily reading rate. This calculation is straightforward and avoids unnecessary complexity with fractions or decimals; instead, it uses whole numbers directly.\n\n1.  **Identify the key values:**\n    *   Total pages in the book: $175$\n    *   Pages read per day: $25$\n\n2.  **Set up the division problem:**\n    $$ \\text{Days} = \\frac{\\text{Total Pages}}{\\text{Pages/day}} $$\n    $$ \\text{Days} = \\frac{175}{25} $$\n\n3.  **Perform the calculation:**\n    *   We can simplify this by dividing both numbers by $5$: $\\frac{175 \\div 5}{25 \\div 5}$, which equals $\\frac{35}{5}$.\n    *   Now we divide: $35 \\div 5 = 7$ days.\n\nSarah will finish the book in **7** days."
+    },
+    "wall_time_seconds": 5.043138250010088,
+    "total_output_chars": 759,
+    "metadata": {},
+    "score": 1.0
+  },
+  {
+    "model": "qwen3.5:0.8b",
+    "mode": "off",
+    "suite": "gsm8k_mini",
+    "question_id": "gsm-07",
+    "question": "A parking lot has 4 levels with 30 spaces on each level. If 78 spaces are occupied, how many spaces are available?",
+    "expected_answer": "42",
+    "final_answer": "To find out how many spots are **available**, we first need to calculate the total number of empty space slots across all levels and then subtract that from the given occupied count (78).\n\n1.  **Calculate Total Spaces per Level:** Since there are 4 levels with a capacity for each level, multiply them:\n    $$4 \\text{ levels} \\times 30 \\text{ spaces/level} = 120 \\text{ total space slots}$$\n\n2.  **Determine Occupied Spots:** The problem states that exactly 78 spots are currently occupied across all the parking lot's four levels:\n    $$\\text{Occupied Spaces} = 78$$\n\n3.  **Calculate Available Slots:** Subtract the number of occupied spaces from the total available space per level (or sum them up):\n    *   Method A (Per Level): $120 \\text{ slots/level} - 78 \\text{ spots} = 42$ remaining on each level. Since there are four levels, this is equivalent to: $(36 + 6) / 4$. However, the standard mathematical approach for \"how many spaces are available\" in a discrete set of items usually implies finding the remainder after subtracting occupied from total per item unless specified otherwise (e.g., if it's an integer division problem).\n    *   Method B (Summation): $120 \\text{ slots} - 78 \\text{ spots} = 42$ available spaces.\n\nBoth methods yield the same result: there are **42** empty parking space locations remaining in this lot.",
+    "all_stage_outputs": {
+      "execute": "To find out how many spots are **available**, we first need to calculate the total number of empty space slots across all levels and then subtract that from the given occupied count (78).\n\n1.  **Calculate Total Spaces per Level:** Since there are 4 levels with a capacity for each level, multiply them:\n    $$4 \\text{ levels} \\times 30 \\text{ spaces/level} = 120 \\text{ total space slots}$$\n\n2.  **Determine Occupied Spots:** The problem states that exactly 78 spots are currently occupied across all the parking lot's four levels:\n    $$\\text{Occupied Spaces} = 78$$\n\n3.  **Calculate Available Slots:** Subtract the number of occupied spaces from the total available space per level (or sum them up):\n    *   Method A (Per Level): $120 \\text{ slots/level} - 78 \\text{ spots} = 42$ remaining on each level. Since there are four levels, this is equivalent to: $(36 + 6) / 4$. However, the standard mathematical approach for \"how many spaces are available\" in a discrete set of items usually implies finding the remainder after subtracting occupied from total per item unless specified otherwise (e.g., if it's an integer division problem).\n    *   Method B (Summation): $120 \\text{ slots} - 78 \\text{ spots} = 42$ available spaces.\n\nBoth methods yield the same result: there are **42** empty parking space locations remaining in this lot."
+    },
+    "wall_time_seconds": 7.477578916994389,
+    "total_output_chars": 1337,
+    "metadata": {},
+    "score": 1.0
+  },
+  {
+    "model": "qwen3.5:0.8b",
+    "mode": "off",
+    "suite": "gsm8k_mini",
+    "question_id": "gsm-08",
+    "question": "Jake earns $12 per hour. He works 8 hours on Monday and 6 hours on Tuesday. How much does he earn in total?",
+    "expected_answer": "168",
+    "final_answer": "To calculate Jake's earnings, we need to determine his hourly rate for each day and then multiply by the number of hours worked that day. Since both days are part of a single week (Monday + Tuesday), these amounts must be summed together before adding them up.\n\n1.  **Calculate Monday Earnings:**\n    *   Hourly Rate: $12 per hour\n    *   Hours Worked on Monday: 8 hours\n    *   Calculation: $12 \\times 8 = \\$96$\n\n2.  **Calculate Tuesday Earnings:**\n    *   Hourly Rate: $12 per hour (same rate as the previous day)\n    *   Hours Worked on Tuesday: 6 hours\n    *   Calculation: $12 \\times 6 = \\$72$\n\n3.  **Total Weekly Earnings:**\n    *   Add Monday and Tuesday earnings together ($\\$96 + \\$72`).\n    *   Result: $\\$168$",
+    "all_stage_outputs": {
+      "execute": "To calculate Jake's earnings, we need to determine his hourly rate for each day and then multiply by the number of hours worked that day. Since both days are part of a single week (Monday + Tuesday), these amounts must be summed together before adding them up.\n\n1.  **Calculate Monday Earnings:**\n    *   Hourly Rate: $12 per hour\n    *   Hours Worked on Monday: 8 hours\n    *   Calculation: $12 \\times 8 = \\$96$\n\n2.  **Calculate Tuesday Earnings:**\n    *   Hourly Rate: $12 per hour (same rate as the previous day)\n    *   Hours Worked on Tuesday: 6 hours\n    *   Calculation: $12 \\times 6 = \\$72$\n\n3.  **Total Weekly Earnings:**\n    *   Add Monday and Tuesday earnings together ($\\$96 + \\$72`).\n    *   Result: $\\$168$"
+    },
+    "wall_time_seconds": 4.67434891598532,
+    "total_output_chars": 720,
+    "metadata": {},
+    "score": 1.0
+  },
+  {
+    "model": "qwen3.5:0.8b",
+    "mode": "off",
+    "suite": "gsm8k_mini",
+    "question_id": "gsm-09",
+    "question": "A recipe calls for 2 cups of flour for 24 cookies. If you want to make 60 cookies, how many cups of flour do you need?",
+    "expected_answer": "5",
+    "final_answer": "To solve this problem, we can set up a direct proportion based on the given recipe and calculate for your new batch size. The ratio between 24 cookies and 2 cups of flour remains constant regardless of how many you make; it only changes if the number of ingredients per cookie shifts. Here is the step-by-step calculation:\n\n1. **Identify the original ratios**:\n   - Original recipe: $60 \\text{ cookies} : 2 \\text{ cups}$ (or $\\frac{3}{5} \\text{ cup flour per cookie}$).\n\n2. **Determine how many cookies fit into one cup of flour** in your new batch size ($x$):\n   - If you use $1 \\text{ cup}$, the total number of cookies would be: $60 / 3 = 20$. This means each cup produces exactly 20 cookies.\n\n3. **Calculate how many cups are needed for 60 cookies**:\n   - Since making 60 cookies requires $\\frac{1}{5} \\text{ (or } 4/5\\%)$ of the original recipe, we multiply by $x$:\n     $$60 / x = (\\frac{2}{3})^{\\circledR}(x)$$\n\n   Solving for $x$, where each cup produces $\\frac{1}{5}$ cookie:\n   - **Original**: 24 cookies with 2 cups.\n   - **New (for 60 cookies)**: $(\\frac{2}{3})^{\\circledR}(2) = \\text{Total Cookies}$.\n\n   Using the formula $x_1 / x_{new\\_total} = (\\frac{x_1}{y_1})^{(\\%)}$:\n   $$x/60 = (2/5)^{(48\\%)^{\\circledR}(3)}$$\n   \n   This simplifies to:\n   - $x \\approx 7.9$ cups\n\n**Answer:** You would need approximately **7.9 cups of flour**.",
+    "all_stage_outputs": {
+      "execute": "To solve this problem, we can set up a direct proportion based on the given recipe and calculate for your new batch size. The ratio between 24 cookies and 2 cups of flour remains constant regardless of how many you make; it only changes if the number of ingredients per cookie shifts. Here is the step-by-step calculation:\n\n1. **Identify the original ratios**:\n   - Original recipe: $60 \\text{ cookies} : 2 \\text{ cups}$ (or $\\frac{3}{5} \\text{ cup flour per cookie}$).\n\n2. **Determine how many cookies fit into one cup of flour** in your new batch size ($x$):\n   - If you use $1 \\text{ cup}$, the total number of cookies would be: $60 / 3 = 20$. This means each cup produces exactly 20 cookies.\n\n3. **Calculate how many cups are needed for 60 cookies**:\n   - Since making 60 cookies requires $\\frac{1}{5} \\text{ (or } 4/5\\%)$ of the original recipe, we multiply by $x$:\n     $$60 / x = (\\frac{2}{3})^{\\circledR}(x)$$\n\n   Solving for $x$, where each cup produces $\\frac{1}{5}$ cookie:\n   - **Original**: 24 cookies with 2 cups.\n   - **New (for 60 cookies)**: $(\\frac{2}{3})^{\\circledR}(2) = \\text{Total Cookies}$.\n\n   Using the formula $x_1 / x_{new\\_total} = (\\frac{x_1}{y_1})^{(\\%)}$:\n   $$x/60 = (2/5)^{(48\\%)^{\\circledR}(3)}$$\n   \n   This simplifies to:\n   - $x \\approx 7.9$ cups\n\n**Answer:** You would need approximately **7.9 cups of flour**."
+    },
+    "wall_time_seconds": 9.406082291010534,
+    "total_output_chars": 1348,
+    "metadata": {},
+    "score": 0.0
+  },
+  {
+    "model": "qwen3.5:0.8b",
+    "mode": "off",
+    "suite": "gsm8k_mini",
+    "question_id": "gsm-10",
+    "question": "There are 200 students in a school. 55% of them are girls. How many boys are there?",
+    "expected_answer": "90",
+    "final_answer": "To find out how many boys there are, we can use simple multiplication based on percentages and total numbers. Here is the step-by-step reasoning:\n\n1.  **Identify Total Students**: There are $200$ students in the school ($N = 200$).\n2.  **Calculate Girls**: The problem states that $55\\%$ of these students are girls. We multiply the total number by this percentage:\n    $$ \\text{Girls} = 200 \\times 0.55 = 110$$\n3.  **Determine Boys**: Since every student is either a girl or a boy, we subtract the count of girls from the total to find the remaining students (boys):\n    $$\\text{Boys} = N - (\\text{Girls}) \\implies \\text{Boys} = 200 - 110$$\n\n**Calculation**: $200 - 110 = 90$\n\nThere are **90 boys**.",
+    "all_stage_outputs": {
+      "execute": "To find out how many boys there are, we can use simple multiplication based on percentages and total numbers. Here is the step-by-step reasoning:\n\n1.  **Identify Total Students**: There are $200$ students in the school ($N = 200$).\n2.  **Calculate Girls**: The problem states that $55\\%$ of these students are girls. We multiply the total number by this percentage:\n    $$ \\text{Girls} = 200 \\times 0.55 = 110$$\n3.  **Determine Boys**: Since every student is either a girl or a boy, we subtract the count of girls from the total to find the remaining students (boys):\n    $$\\text{Boys} = N - (\\text{Girls}) \\implies \\text{Boys} = 200 - 110$$\n\n**Calculation**: $200 - 110 = 90$\n\nThere are **90 boys**."
+    },
+    "wall_time_seconds": 4.818084166996414,
+    "total_output_chars": 700,
+    "metadata": {},
+    "score": 1.0
+  }
+]
