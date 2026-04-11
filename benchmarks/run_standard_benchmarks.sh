@@ -87,3 +87,10 @@ echo "════════════════════════�
 echo "All standard benchmarks complete!"
 echo "Results: $OUTPUT_DIR"
 echo "═══════════════════════════════════════════════════════"
+
+  python3 -m benchmarks.run_benchmarks \
+      --models "qwen3.5:4b" \
+      --modes "off,medium,hard" \
+      --suites "gsm8k_mini" \
+      --output benchmarks/results/ \
+      --limit 10

@@ -97,15 +97,20 @@ def _system_prompt_for_execute(mode: str) -> str:
 
 def _system_prompt_for_critique() -> str:
     return (
-        "You are the expert critique and revision stage in a reasoning pipeline.\n"
+        "You are the expert evaluator in a reasoning pipeline.\n"
         "Your task: rigorously audit the draft answer against the original request, the technical plan, and objective standards.\n"
         "Instructions:\n"
         "1. DIFFERENTIAL REVIEW: Review the draft for factual errors, weak logic, or failure to follow constraints.\n"
         "2. VERIFICATION CHECK: Confirm the solution handles all edge cases and correctly solves the problem.\n"
         "3. LOGIC & OMISSIONS: Actively look for calculation errors, missing steps, or incomplete logic.\n"
-        "4. DIFFERENTIAL OUTPUT: If the draft is completely correct, output it exactly as is. ONLY modify it if you find a specific error. Do not change it just to change it.\n"
-        "5. BREVITY UNDER CONTROL: Do not pad. If the draft already answered a point, do not restate it unless needed for correction.\n"
-        "6. NO META-COMMENTARY: Output ONLY the final answer. Do not include introductory filler, summaries of changes, or explanations."
+        "4. STRUCTURED OUTPUT: You MUST output a valid JSON object with the following schema:\n"
+        "   {\n"
+        "     \"score\": <integer from 1 to 10>,\n"
+        "     \"status\": \"<pass or fail>\",\n"
+        "     \"feedback\": [\"<specific actionable feedback point 1>\", \"<point 2>\", ...]\n"
+        "   }\n"
+        "5. PASS CRITERIA: Only set status to 'pass' if the answer is completely correct and ready for the user. If there are any flaws, set status to 'fail' and provide actionable feedback.\n"
+        "6. NO META-COMMENTARY: Output ONLY the JSON object. Do not include markdown code blocks (e.g., ```json) or any surrounding text."
     )
 
 
@@ -117,18 +122,26 @@ def _build_messages_for_plan(user_message: str) -> list[dict[str, str]]:
     ]
 
 
-def _build_messages_for_execute(user_message: str, plan: str, mode: str) -> list[dict[str, str]]:
-    return [
+def _build_messages_for_execute(user_message: str, plan: str, mode: str, feedbacks: list[str] = None) -> list[dict[str, str]]:
+    messages = [
         {"role": "system", "content": _system_prompt_for_execute(mode)},
-        {
-            "role": "user",
-            "content": (
-                f"User request:\n{user_message}\n\n"
-                f"Plan:\n{plan or 'No plan was generated.'}\n\n"
-                "Write the best possible answer."
-            ),
-        },
     ]
+
+    content = (
+        f"User request:\n{user_message}\n\n"
+        f"Plan:\n{plan or 'No plan was generated.'}\n\n"
+    )
+
+    if feedbacks:
+        content += "Previous Feedback and Required Refinements:\n"
+        for i, feedback in enumerate(feedbacks):
+            content += f"Iteration {i+1} Feedback:\n{feedback}\n\n"
+        content += "Revise your answer to fully address the feedback while maintaining the original plan.\n"
+    else:
+        content += "Write the best possible answer.\n"
+
+    messages.append({"role": "user", "content": content})
+    return messages
 
 
 def _build_messages_for_critique(user_message: str, plan: str, draft: str) -> list[dict[str, str]]:
@@ -340,41 +353,29 @@ async def run_pipeline(
     ollama_think: bool,
     user_message: str,
     mode: str,
+    max_iterations: int = 3,
 ) -> AsyncIterator[dict]:
+    import json
     steps = _pipeline_for_mode(mode)
     outputs: dict[str, str] = {}
 
     yield {"type": "run-start", "mode": mode, "steps": list(steps)}
 
-    for step in steps:
-        model = model_map.get(step) or model_map.get("execute") or ""
+    # Phase 1: Planning
+    if "plan" in steps:
+        model = model_map.get("plan") or model_map.get("execute") or ""
         if not model:
-            raise ValueError(f"No model configured for step '{step}'.")
+            raise ValueError("No model configured for step 'plan'.")
 
         yield {
             "type": "step-start",
-            "step": step,
-            "label": STEP_LABELS[step],
+            "step": "plan",
+            "label": STEP_LABELS["plan"],
             "model": model,
-            "thought": step == "plan" or (step == "execute" and mode == "hard"),
+            "thought": True,
         }
 
-        if step == "execute" and mode != "hard":
-            yield {"type": "answer-start", "step": step, "label": STEP_LABELS[step], "model": model}
-        if step == "critique":
-            yield {"type": "answer-start", "step": step, "label": STEP_LABELS[step], "model": model}
-
-        if step == "plan":
-            messages = _build_messages_for_plan(user_message)
-        elif step == "execute":
-            messages = _build_messages_for_execute(user_message, outputs.get("plan", ""), mode)
-        else:
-            messages = _build_messages_for_critique(
-                user_message,
-                outputs.get("plan", ""),
-                outputs.get("execute", ""),
-            )
-
+        messages = _build_messages_for_plan(user_message)
         buffer: list[str] = []
         partial_content = ""
         async for token in client.stream_chat(
@@ -388,42 +389,156 @@ async def run_pipeline(
             partial_content += token
             yield {
                 "type": "step-delta",
-                "step": step,
+                "step": "plan",
                 "delta": token,
                 "content": partial_content,
-
             }
 
-            if (step == "execute" and mode != "hard") or step == "critique":
-                yield {
-                    "type": "answer-delta",
-                    "step": step,
-                    "delta": token,
-                    "content": partial_content,
-    
-                }
-
-        outputs[step] = "".join(buffer).strip()
+        outputs["plan"] = "".join(buffer).strip()
         yield {
             "type": "step-complete",
-            "step": step,
-            "content": outputs[step],
-
+            "step": "plan",
+            "content": outputs["plan"],
         }
 
-        if (step == "execute" and mode != "hard") or step == "critique":
+    # Phase 2: Execution and Refinement Loop
+    iteration = 0
+    passed = False
+    feedbacks = []
+
+    max_loops = max_iterations if "critique" in steps else 1
+
+    while iteration < max_loops and not passed:
+        # --- EXECUTE STEP ---
+        execute_step_id = f"execute_iter_{iteration}" if "critique" in steps else "execute"
+        execute_label = f"Refining ({iteration+1}/{max_loops})" if iteration > 0 else STEP_LABELS["execute"]
+        execute_model = model_map.get("execute") or ""
+        if not execute_model:
+            raise ValueError("No model configured for step 'execute'.")
+
+        yield {
+            "type": "step-start",
+            "step": execute_step_id,
+            "label": execute_label,
+            "model": execute_model,
+            "thought": mode == "hard",
+        }
+
+        if mode != "hard":
+            yield {"type": "answer-start", "step": execute_step_id, "label": execute_label, "model": execute_model}
+
+        messages = _build_messages_for_execute(user_message, outputs.get("plan", ""), mode, feedbacks)
+
+        buffer: list[str] = []
+        partial_content = ""
+        async for token in client.stream_chat(
+            provider_kind=provider_kind,
+            base_url=base_url,
+            model=execute_model,
+            messages=messages,
+            ollama_think=ollama_think,
+        ):
+            buffer.append(token)
+            partial_content += token
             yield {
-                "type": "answer-complete",
-                "step": step,
-                "content": outputs[step],
-    
+                "type": "step-delta",
+                "step": execute_step_id,
+                "delta": token,
+                "content": partial_content,
             }
 
-    if mode == "off":
-        outputs["final"] = outputs.get("execute", "")
-    elif mode == "medium":
-        outputs["final"] = outputs.get("execute", "")
-    else:
-        outputs["final"] = outputs.get("critique", "")
+            if mode != "hard":
+                yield {
+                    "type": "answer-delta",
+                    "step": execute_step_id,
+                    "delta": token,
+                    "content": partial_content,
+                }
 
+        outputs["execute"] = "".join(buffer).strip()
+        yield {
+            "type": "step-complete",
+            "step": execute_step_id,
+            "content": outputs["execute"],
+        }
+
+        if mode != "hard":
+            yield {
+                "type": "answer-complete",
+                "step": execute_step_id,
+                "content": outputs["execute"],
+            }
+
+        if "critique" not in steps:
+            break
+
+        # --- CRITIQUE (EVALUATE) STEP ---
+        critique_step_id = f"critique_iter_{iteration}"
+        critique_model = model_map.get("critique") or execute_model
+
+        yield {
+            "type": "step-start",
+            "step": critique_step_id,
+            "label": f"Evaluating ({iteration+1}/{max_loops})",
+            "model": critique_model,
+            "thought": True,
+        }
+
+        messages = _build_messages_for_critique(
+            user_message,
+            outputs.get("plan", ""),
+            outputs.get("execute", ""),
+        )
+
+        buffer: list[str] = []
+        partial_content = ""
+        async for token in client.stream_chat(
+            provider_kind=provider_kind,
+            base_url=base_url,
+            model=critique_model,
+            messages=messages,
+            ollama_think=ollama_think,
+        ):
+            buffer.append(token)
+            partial_content += token
+            yield {
+                "type": "step-delta",
+                "step": critique_step_id,
+                "delta": token,
+                "content": partial_content,
+            }
+
+        raw_critique = "".join(buffer).strip()
+        yield {
+            "type": "step-complete",
+            "step": critique_step_id,
+            "content": raw_critique,
+        }
+
+        # Parse critique output
+        try:
+            # Try to find JSON within the output in case the model added markdown blocks or text
+            json_str = raw_critique
+            if "```json" in json_str:
+                json_str = json_str.split("```json")[1].split("```")[0].strip()
+            elif "```" in json_str:
+                 json_str = json_str.split("```")[1].split("```")[0].strip()
+
+            critique_data = json.loads(json_str)
+            status = critique_data.get("status", "fail").lower()
+            feedback_points = critique_data.get("feedback", [])
+
+            if status == "pass" or status == "passed":
+                passed = True
+            else:
+                formatted_feedback = "\n".join(f"- {point}" for point in feedback_points)
+                feedbacks.append(formatted_feedback)
+
+        except Exception:
+            # Fallback if model doesn't output valid JSON
+            feedbacks.append(f"Invalid evaluation format. Please carefully review your previous answer.\nRaw output: {raw_critique}")
+
+        iteration += 1
+
+    outputs["final"] = outputs.get("execute", "")
     yield {"type": "run-complete", "outputs": outputs}
