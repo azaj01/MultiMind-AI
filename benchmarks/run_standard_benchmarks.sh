@@ -17,7 +17,7 @@
 
 set -euo pipefail
 
-OLLAMA_URL="http://127.0.0.1:11434/v1"
+OLLAMA_URL="http://127.0.0.1:11434/api/chat"
 OUTPUT_DIR="benchmarks/results/standard"
 MODELS=("qwen3.5:0.8b" "qwen3.5:4b" "qwen3.5:9b")
 
@@ -73,6 +73,7 @@ for model in "${MODELS[@]}"; do
             --model local-chat-completions \
             --model_args "model=${model},base_url=${OLLAMA_URL},num_concurrent=1,max_retries=3,tokenized_requests=False" \
             --tasks "$task" \
+            --apply_chat_template \
             --output_path "$result_file" \
             --log_samples \
             --batch_size 1 \

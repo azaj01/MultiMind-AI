@@ -13,6 +13,42 @@ from multimind.org_roles import (
 
 COMPANY_NAME = "MultiMind Corp"
 
+# ---------------------------------------------------------------------------
+# Ticket abstraction — lightweight, in-memory Paperclip-style ticket system
+# ---------------------------------------------------------------------------
+
+_ticket_counter = 0
+
+
+def _create_ticket(
+    *,
+    assignee_role: str,
+    description: str,
+    parent_id: str | None = None,
+    goal_ancestry: list[str] | None = None,
+) -> dict:
+    """Create an in-memory ticket that wraps a task assignment.
+
+    Inspired by Paperclip AI's ticket system: every piece of work is a
+    structured ticket with owner, status, goal ancestry, and budget tracking.
+    """
+    global _ticket_counter
+    _ticket_counter += 1
+    return {
+        "ticket_id": f"TKT-{_ticket_counter:04d}",
+        "parent_id": parent_id,
+        "assignee_role": assignee_role,
+        "description": description,
+        "status": "pending",          # pending → in-progress → done | skipped
+        "goal_ancestry": goal_ancestry or [],
+        "result": None,
+        "budget_used": 0,
+    }
+
+
+# ---------------------------------------------------------------------------
+# System prompts
+# ---------------------------------------------------------------------------
 
 def _system_prompt_ceo() -> str:
     roster = get_department_roster_summary()
@@ -29,8 +65,10 @@ def _system_prompt_ceo() -> str:
         "The department must be able to act on it without reading the original request.\n"
         "4. If a department's work depends on another's output, note that dependency in the task description.\n\n"
 
-        "Available departments and their specialists:\n"
+        "Available departments and their specialist capabilities:\n"
         f"{roster}\n\n"
+
+        "Route work based on the specific capabilities listed above — not just the department name.\n\n"
 
         "Output rules — these are absolute:\n"
         "- Respond with ONLY a valid JSON array. No preamble, no explanation, no trailing text.\n"
@@ -46,15 +84,30 @@ def _system_prompt_ceo() -> str:
     )
 
 
-def _system_prompt_ceo_scope_tasks(department: str, roles: list[str]) -> str:
-    role_list = ", ".join(roles)
+def _system_prompt_ceo_scope_tasks(department: str, roster: list[dict]) -> str:
+    """Build a scope-tasks prompt that injects per-role capabilities.
+
+    The CEO uses these capability descriptions to make informed assignment
+    decisions — routing work based on actual skills, not just role names.
+    This mirrors Paperclip AI's capabilities-aware delegation.
+    """
+    role_details = []
+    role_names = []
+    for e in roster:
+        cap = e.get("capabilities", "General specialist")
+        role_details.append(f"• {e['role']}: {cap}")
+        role_names.append(e["role"])
+
+    role_detail_str = "\n".join(role_details)
+    role_list = ", ".join(role_names)
+
     return (
         f"You are the CEO. You previously assigned a sub-task to the {department} department. "
-        f"That department has these specialists: {role_list}.\n\n"
+        f"That department has these specialists and their capabilities:\n{role_detail_str}\n\n"
 
         "Your job now is to split the sub-task into individual assignments — one per specialist who is "
         "genuinely needed. Not every specialist must be used. Only assign work that requires "
-        "that specific role's expertise.\n\n"
+        "that specific role's expertise based on their capabilities listed above.\n\n"
 
         "Each assignment must be fully self-contained: include all context the employee needs, "
         "because they will not see the original request.\n\n"
@@ -63,7 +116,7 @@ def _system_prompt_ceo_scope_tasks(department: str, roles: list[str]) -> str:
         "- Respond with ONLY a valid JSON array. No preamble, no explanation, no trailing text.\n"
         "- Each object has exactly two string keys: \"role\" and \"task\".\n"
         f"- Valid role names: {role_list}.\n"
-        f"- 1–{len(roles)} employees maximum. If the task can be done by one person, assign one.\n\n"
+        f"- 1–{len(role_names)} employees maximum. If the task can be done by one person, assign one.\n\n"
 
         "Example:\n"
         '[{"role": "Backend Developer", "task": "Implement JWT-based user authentication. '
@@ -136,6 +189,10 @@ def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 
+# ---------------------------------------------------------------------------
+# Main pipeline
+# ---------------------------------------------------------------------------
+
 async def run_org_pipeline(
     *,
     client: LocalLLMClient,
@@ -145,7 +202,14 @@ async def run_org_pipeline(
     ollama_think: bool,
     user_message: str,
 ) -> AsyncIterator[dict]:
-    """Run the multi-agent org chart pipeline with pre-trained employees."""
+    """Run the multi-agent org chart pipeline with pre-trained employees.
+
+    Implements Paperclip AI-inspired patterns:
+    - Ticket-based task management with goal ancestry
+    - Capabilities-aware routing via enriched system prompts
+    - Per-employee budget tracking with auto-skip
+    - Ticket state-change SSE events for audit trail
+    """
 
     # ── Phase 1: CEO decomposes the task into departments ─────────
     ceo_id = "org-ceo"
@@ -218,6 +282,23 @@ async def run_org_pipeline(
         roster = get_department_employees(dept_name)
         role_names = [e["role"] for e in roster]
 
+        # Create a department-level ticket (goal ancestry starts here)
+        dept_ticket = _create_ticket(
+            assignee_role=f"{dept_name} Department",
+            description=dept_task,
+            goal_ancestry=[f"User: {user_message}"],
+        )
+
+        # Emit ticket-created event for the department
+        yield {
+            "type": "org-ticket-created",
+            "ticket_id": dept_ticket["ticket_id"],
+            "parent_id": dept_ticket["parent_id"],
+            "assignee_role": dept_ticket["assignee_role"],
+            "description": dept_task[:200],  # truncate for SSE readability
+            "goal_ancestry": dept_ticket["goal_ancestry"],
+        }
+
         # Emit a synthetic department group node (preserves 3-level visual hierarchy)
         yield {
             "type": "org-node-start",
@@ -230,9 +311,20 @@ async def run_org_pipeline(
             "reports": 0,
         }
 
+        # Transition ticket: pending → in-progress
+        old_status = dept_ticket["status"]
+        dept_ticket["status"] = "in-progress"
+        yield {
+            "type": "org-ticket-status-changed",
+            "ticket_id": dept_ticket["ticket_id"],
+            "old_status": old_status,
+            "new_status": "in-progress",
+        }
+
         # Phase 2: CEO scopes tasks for this department's specialists
+        #   Now uses capabilities-aware prompt (roster includes capabilities)
         scope_messages = [
-            {"role": "system", "content": _system_prompt_ceo_scope_tasks(dept_name, role_names)},
+            {"role": "system", "content": _system_prompt_ceo_scope_tasks(dept_name, roster)},
             {"role": "user", "content": dept_task},
         ]
 
@@ -271,13 +363,36 @@ async def run_org_pipeline(
         # Phase 3: Employees execute their assignments using pre-trained prompts
         employee_results: list[dict] = []
 
-        # Build a lookup from role name → system_prompt
+        # Build lookups from role name → system_prompt and role name → token_budget
         role_prompt_map = {e["role"]: e["system_prompt"] for e in roster}
+        role_budget_map = {e["role"]: e.get("token_budget", 8000) for e in roster}
 
         for emp_idx, emp_info in enumerate(assignments):
             emp_role = emp_info.get("role", roster[0]["role"])
             emp_task = emp_info.get("task", "")
             emp_id = f"org-emp-{_slug(dept_name)}-{_slug(emp_role)}-{emp_idx}"
+
+            # Create an employee-level ticket with full goal ancestry
+            emp_ticket = _create_ticket(
+                assignee_role=emp_role,
+                description=emp_task,
+                parent_id=dept_ticket["ticket_id"],
+                goal_ancestry=[
+                    f"User: {user_message}",
+                    f"{dept_name}: {dept_task}",
+                    f"{emp_role}: {emp_task}",
+                ],
+            )
+
+            # Emit ticket-created event for the employee
+            yield {
+                "type": "org-ticket-created",
+                "ticket_id": emp_ticket["ticket_id"],
+                "parent_id": emp_ticket["parent_id"],
+                "assignee_role": emp_ticket["assignee_role"],
+                "description": emp_task[:200],
+                "goal_ancestry": emp_ticket["goal_ancestry"],
+            }
 
             # Use pre-trained system prompt, or fall back to a generic one
             emp_system_prompt = role_prompt_map.get(
@@ -300,6 +415,16 @@ async def run_org_pipeline(
                 "reports": 0,
             }
 
+            # Transition ticket: pending → in-progress
+            old_status = emp_ticket["status"]
+            emp_ticket["status"] = "in-progress"
+            yield {
+                "type": "org-ticket-status-changed",
+                "ticket_id": emp_ticket["ticket_id"],
+                "old_status": old_status,
+                "new_status": "in-progress",
+            }
+
             emp_messages = [
                 {"role": "system", "content": emp_system_prompt},
                 {"role": "user", "content": emp_task},
@@ -307,6 +432,9 @@ async def run_org_pipeline(
 
             emp_buffer: list[str] = []
             emp_partial = ""
+            emp_budget = role_budget_map.get(emp_role, 8000)
+            char_count = 0
+            budget_exceeded = False
 
             async for token in client.stream_chat(
                 provider_kind=provider_kind,
@@ -317,6 +445,8 @@ async def run_org_pipeline(
             ):
                 emp_buffer.append(token)
                 emp_partial += token
+                char_count += len(token)
+
                 yield {
                     "type": "org-node-delta",
                     "node_id": emp_id,
@@ -324,7 +454,39 @@ async def run_org_pipeline(
                     "content": emp_partial,
                 }
 
+                # Budget enforcement: auto-skip when character budget exceeded
+                if char_count >= emp_budget:
+                    budget_exceeded = True
+                    yield {
+                        "type": "org-budget-warning",
+                        "node_id": emp_id,
+                        "role": emp_role,
+                        "ticket_id": emp_ticket["ticket_id"],
+                        "budget": emp_budget,
+                        "used": char_count,
+                    }
+                    break
+
             emp_output = "".join(emp_buffer).strip()
+
+            # Transition ticket to final state
+            if budget_exceeded:
+                emp_ticket["status"] = "skipped"
+                emp_ticket["result"] = emp_output
+                emp_ticket["budget_used"] = char_count
+            else:
+                emp_ticket["status"] = "done"
+                emp_ticket["result"] = emp_output
+                emp_ticket["budget_used"] = char_count
+
+            yield {
+                "type": "org-ticket-status-changed",
+                "ticket_id": emp_ticket["ticket_id"],
+                "old_status": "in-progress",
+                "new_status": emp_ticket["status"],
+                "budget_used": emp_ticket["budget_used"],
+            }
+
             yield {
                 "type": "org-node-complete",
                 "node_id": emp_id,
@@ -336,7 +498,19 @@ async def run_org_pipeline(
                 "role": emp_role,
                 "task": emp_task,
                 "result": emp_output,
+                "ticket_id": emp_ticket["ticket_id"],
+                "budget_used": emp_ticket["budget_used"],
+                "status": emp_ticket["status"],
             })
+
+        # Transition department ticket to done
+        dept_ticket["status"] = "done"
+        yield {
+            "type": "org-ticket-status-changed",
+            "ticket_id": dept_ticket["ticket_id"],
+            "old_status": "in-progress",
+            "new_status": "done",
+        }
 
         all_department_results.append({
             "department": dept_name,
@@ -349,7 +523,8 @@ async def run_org_pipeline(
     for dept_result in all_department_results:
         section = f"## {dept_result['department']}\n"
         for emp in dept_result["employees"]:
-            section += f"### {emp['role']}\n{emp['result']}\n\n"
+            status_tag = " [BUDGET EXCEEDED — partial]" if emp["status"] == "skipped" else ""
+            section += f"### {emp['role']}{status_tag}\n{emp['result']}\n\n"
         synthesis_sections.append(section)
 
     synthesis_input = (

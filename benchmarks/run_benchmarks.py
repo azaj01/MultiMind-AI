@@ -216,7 +216,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--models",
-        default="qwen3.5:4b",
+        default="qwen3.5:0.8b",
         help="Comma-separated list of models (default: qwen3.5:4b)",
     )
     parser.add_argument(

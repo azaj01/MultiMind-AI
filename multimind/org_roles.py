@@ -11,11 +11,13 @@ from __future__ import annotations
 # Employee definitions per department
 # ---------------------------------------------------------------------------
 
-DEPARTMENTS: dict[str, list[dict[str, str]]] = {
+DEPARTMENTS: dict[str, list[dict]] = {
     # ── Engineering ─────────────────────────────────────────────────
     "Engineering": [
         {
             "role": "Backend Developer",
+            "capabilities": "REST/GraphQL API design, database integration, auth flows (JWT/OAuth), async patterns, observability",
+            "token_budget": 8000,
             "system_prompt": (
                 "You are a senior Backend Developer specialising in server-side architecture, "
                 "API design, and data-layer engineering.\n\n"
@@ -43,6 +45,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
         },
         {
             "role": "Frontend Developer",
+            "capabilities": "React/Next.js/Vue/Svelte component architecture, responsive design, accessibility, state management, TypeScript",
+            "token_budget": 8000,
             "system_prompt": (
                 "You are a senior Frontend Developer specialising in component architecture, "
                 "responsive design, and interactive user experiences.\n\n"
@@ -70,6 +74,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
         },
         {
             "role": "DevOps Engineer",
+            "capabilities": "Docker/K8s containerisation, CI/CD pipelines, cloud infrastructure (AWS/GCP/Azure), Terraform IaC, monitoring",
+            "token_budget": 6000,
             "system_prompt": (
                 "You are a senior DevOps Engineer specialising in containerisation, CI/CD pipelines, "
                 "and cloud infrastructure.\n\n"
@@ -101,6 +107,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
     "Design": [
         {
             "role": "UI/UX Designer",
+            "capabilities": "Interaction design, wireframing, visual design systems, accessibility audits, user research, responsive layouts",
+            "token_budget": 6000,
             "system_prompt": (
                 "You are a senior UI/UX Designer with deep expertise in interaction design, "
                 "user research, and visual design systems.\n\n"
@@ -132,6 +140,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
         },
         {
             "role": "Design System Architect",
+            "capabilities": "Design token architecture, component API design, theming (dark/light/brand), cross-platform token compilation",
+            "token_budget": 6000,
             "system_prompt": (
                 "You are a Design System Architect responsible for creating and maintaining "
                 "scalable, consistent design token architectures.\n\n"
@@ -160,6 +170,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
     "Product": [
         {
             "role": "Product Manager",
+            "capabilities": "PRD authoring, prioritisation (RICE/MoSCoW), roadmap planning, discovery, metrics frameworks",
+            "token_budget": 6000,
             "system_prompt": (
                 "You are a senior Product Manager with expertise in discovery, prioritisation, "
                 "and go-to-market strategy.\n\n"
@@ -186,6 +198,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
         },
         {
             "role": "Product Analyst",
+            "capabilities": "A/B test design, funnel analysis, user segmentation, KPI frameworks, SQL/pandas analysis",
+            "token_budget": 6000,
             "system_prompt": (
                 "You are a Product Analyst specialising in experiment design, metric analysis, "
                 "and data-driven product decisions.\n\n"
@@ -214,6 +228,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
     "QA": [
         {
             "role": "QA Engineer",
+            "capabilities": "Test strategy (unit/integration/E2E), automation (Playwright/Cypress/pytest), mocking, CI test pipelines",
+            "token_budget": 8000,
             "system_prompt": (
                 "You are a senior QA Engineer specialising in test strategy, automation, "
                 "and quality assurance across the full stack.\n\n"
@@ -240,6 +256,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
         },
         {
             "role": "Security Auditor",
+            "capabilities": "OWASP Top 10 analysis, threat modelling (STRIDE), code review for security, API security, compliance (SOC 2/GDPR)",
+            "token_budget": 6000,
             "system_prompt": (
                 "You are a Security Auditor specialising in application security, threat modelling, "
                 "and compliance assessment.\n\n"
@@ -271,6 +289,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
     "Data Science": [
         {
             "role": "ML Engineer",
+            "capabilities": "Supervised/deep learning (PyTorch/TF), NLP, model lifecycle, MLOps (MLflow), data pipelines",
+            "token_budget": 8000,
             "system_prompt": (
                 "You are a senior ML Engineer specialising in model development, training pipelines, "
                 "and production deployment of machine learning systems.\n\n"
@@ -298,6 +318,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
         },
         {
             "role": "Data Analyst",
+            "capabilities": "EDA, hypothesis testing, causal inference, time series analysis, visualisation (matplotlib/plotly), SQL",
+            "token_budget": 6000,
             "system_prompt": (
                 "You are a senior Data Analyst specialising in exploratory data analysis, "
                 "statistical testing, and data visualisation.\n\n"
@@ -327,6 +349,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
     "Content": [
         {
             "role": "Technical Writer",
+            "capabilities": "API references (OpenAPI), tutorials, architecture docs (C4/ADR), developer experience, Markdown/MDX",
+            "token_budget": 6000,
             "system_prompt": (
                 "You are a senior Technical Writer specialising in developer documentation, "
                 "API references, and technical guides.\n\n"
@@ -353,6 +377,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
         },
         {
             "role": "Content Strategist",
+            "capabilities": "SEO content creation, content pillars/clustering, social media strategy, email marketing, analytics",
+            "token_budget": 6000,
             "system_prompt": (
                 "You are a Content Strategist specialising in SEO-optimised content creation, "
                 "omnichannel distribution, and audience growth.\n\n"
@@ -384,6 +410,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
     "Research": [
         {
             "role": "Research Engineer",
+            "capabilities": "Scientific rigour, algorithm design, performance optimisation, multi-language implementation (Rust/C++/Python)",
+            "token_budget": 8000,
             "system_prompt": (
                 "You are a Research Engineer operating with absolute scientific rigour. "
                 "Your purpose is to bridge theoretical correctness and high-performance implementation.\n\n"
@@ -416,6 +444,8 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
         },
         {
             "role": "Market Researcher",
+            "capabilities": "Market sizing (TAM/SAM/SOM), competitive analysis (Porter's/SWOT), pricing strategy, trend analysis",
+            "token_budget": 6000,
             "system_prompt": (
                 "You are a Market Researcher specialising in competitive analysis, market sizing, "
                 "and strategic intelligence.\n\n"
@@ -447,7 +477,7 @@ DEPARTMENTS: dict[str, list[dict[str, str]]] = {
 VALID_DEPARTMENTS: frozenset[str] = frozenset(DEPARTMENTS.keys())
 
 
-def get_department_employees(department: str) -> list[dict[str, str]]:
+def get_department_employees(department: str) -> list[dict]:
     """Return the pre-trained employee roster for a department.
 
     If the department is unknown, returns a single generic Specialist
@@ -459,6 +489,8 @@ def get_department_employees(department: str) -> list[dict[str, str]]:
     return [
         {
             "role": "Specialist",
+            "capabilities": f"General specialist for the {department} domain",
+            "token_budget": 6000,
             "system_prompt": (
                 f"You are a specialist in the {department} department. "
                 "You receive a scoped assignment and deliver a complete, professional result. "
@@ -477,6 +509,9 @@ def get_department_roster_summary() -> str:
     """
     lines: list[str] = []
     for dept, employees in DEPARTMENTS.items():
-        roles = ", ".join(e["role"] for e in employees)
-        lines.append(f"- {dept}: {roles}")
+        role_entries = []
+        for e in employees:
+            cap = e.get("capabilities", "General specialist")
+            role_entries.append(f"  • {e['role']}: {cap}")
+        lines.append(f"- {dept}:\n" + "\n".join(role_entries))
     return "\n".join(lines)
